@@ -59,6 +59,10 @@ find_package(catkin REQUIRED COMPONENTS
 #   Message1.msg
 #   Message2.msg
 # )
+add_message_files(
+  FILES
+  PosVel.msg
+)
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -78,6 +82,7 @@ find_package(catkin REQUIRED COMPONENTS
    DEPENDENCIES
    actionlib_msgs
    geometry_msgs
+   std_msgs
  )
 
 ################################################

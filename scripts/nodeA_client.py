@@ -5,11 +5,12 @@ import rospy
 import actionlib
 import actionlib.msg
 import assignment_2_2023.msg
-from assignment_2_2023.msg import PubVel
+from assignment_2_2023.msg import PosVel
+from nav_msgs.msg import Odometry
 #from actionlib_msgs.msg import GoalStatus
 import sys
 
-pub = rospy.Publisher('/goal', assignment_2_2023.msg.PlanningAction, queue_size=10)
+pub = rospy.Publisher('/pos_vel', PosVel, queue_size=10)
 
 def action_client(): #function to set the goal
     # Creates the SimpleActionClient, passing the type of the action
@@ -22,9 +23,8 @@ def action_client(): #function to set the goal
     # Define the goal
     #goal.target_pose.header.frame_id = "goal" # define the frame
     while not rospy.is_shutdown(): # while ros is running
-        pub = PubVel()
-        print("%f", pub.x)
-
+        #pub = PosVel()
+        
 
         rospy.loginfo("\n Please enter the goal position: ")
         try:
@@ -56,7 +56,11 @@ if __name__ == '__main__': # entry point of Python script.
         # Initializes a rospy node so that the SimpleActionClient can
         # publish and subscribe over ROS.
         rospy.init_node('nodeA_client')
-        
+        x = Odometry().pose.pose.position.x
+        y = Odometry().pose.pose.position.y
+        vx = Odometry().twist.twist.linear.x
+        vy = Odometry().twist.twist.linear.y
+        pub.publish(x, y, vx, vy)
         action_client()
         #result = action_client()
         #print("Result:", result)
