@@ -8,10 +8,12 @@ import actionlib.msg
 import assignment_2_2023.msg
 from assignment_2_2023.msg import PosVel
 from nav_msgs.msg import Odometry
+from assignment_2_2023.srv import GoalPos
 #from actionlib_msgs.msg import GoalStatus
 import sys
 
 pub = rospy.Publisher('/pos_vel', PosVel, queue_size=10)
+#pub2 = rospy.Publisher('/goal_pos', GoalPos, queue_size=10)
 
 def callback(msg):
     vel = PosVel()
@@ -43,6 +45,7 @@ def action_client(): #function to set the goal
             print(type(goal.target_pose.pose.position.x))
             print(type(goal.target_pose.pose.position.y))
             client.send_goal(goal)
+            #pub2.publish(goal.target_pose.pose.position.x, goal.target_pose.pose.position.y)
             # target cancelation
             
             print("press 'c' to cancel the goal: ")
