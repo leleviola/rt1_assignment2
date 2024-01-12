@@ -18,6 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   std_srvs
   tf
+  message_generation
 )
 
 ## System dependencies are found with CMake's conventions
@@ -79,7 +80,6 @@ add_message_files(
    actionlib_msgs
    geometry_msgs
    std_msgs
-   message_generation
  )
 
 ################################################

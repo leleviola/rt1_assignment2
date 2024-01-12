@@ -11,6 +11,7 @@ from nav_msgs.msg import Odometry
 import sys
 
 pub = rospy.Publisher('/pos_vel', PosVel, queue_size=10)
+
 def callback(msg):
     vel = PosVel()
     vel.x = msg.pose.pose.position.x
@@ -44,11 +45,13 @@ def action_client(): #function to set the goal
             print(type(goal.target_pose.pose.position.y))
             client.send_goal(goal)
             # target cancelation
-            cancel = input("Press 'c' to cancel the goal: ")
-            if cancel == 'c':
-                client.cancel_goal()
-            else:
-                print("The goal is still active.")
+            
+            while(not(actionlib.msg.GoalStatus.SUCCEEDED)):
+                cancel = input("Press 'c' to cancel the goal: ")
+                if cancel == 'c':
+                    client.cancel_goal()
+                else:
+                    print("The goal is still active.")
             # Sends the goal to the action server.
             
         except ValueError:
