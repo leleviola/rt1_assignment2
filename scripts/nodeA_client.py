@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 import rospy
+import select
 #import geometry_msgs.msg
 #from nav_msgs.msg import Odometry
 import actionlib
@@ -34,10 +35,8 @@ def action_client(): #function to set the goal
     # Define the goal
     #goal.target_pose.header.frame_id = "goal" # define the frame
     while not rospy.is_shutdown(): # while ros is running
-        #pub = PosVel()
-        
 
-        rospy.loginfo("\n Please enter the goal position: ")
+        rospy.loginfo("\n please enter the goal position: ")
         try:
             goal.target_pose.pose.position.x = float(input("x: ")) # define x of the goal
             goal.target_pose.pose.position.y = float(input("y: ")) # define y of the goal
@@ -46,13 +45,19 @@ def action_client(): #function to set the goal
             client.send_goal(goal)
             # target cancelation
             
-            while(not(actionlib.msg.GoalStatus.SUCCEEDED)):
-                cancel = input("Press 'c' to cancel the goal: ")
-                if cancel == 'c':
-                    client.cancel_goal()
-                else:
-                    print("The goal is still active.")
+            print("press 'c' to cancel the goal: ")
+            while(client.get_state() != actionlib.GoalStatus.SUCCEEDED):
+                i, o, e = select.select( [sys.stdin], [], [], 1.0 )
+                if (i):
+                    cancel = sys.stdin.readline().strip()
+                    if cancel == 'c':
+                        client.cancel_goal()
+                        print("goal canceled...")
+                        break
             # Sends the goal to the action server.
+            if(client.get_state() == actionlib.GoalStatus.SUCCEEDED):
+                print("goal has been reached! :)")
+            
             
         except ValueError:
             print("Invalid input, please enter a number.")
