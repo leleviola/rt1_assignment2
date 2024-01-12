@@ -11,7 +11,17 @@ from nav_msgs.msg import Odometry
 import sys
 
 pub = rospy.Publisher('/pos_vel', PosVel, queue_size=10)
-
+def callback(msg):
+    vel = PosVel()
+    vel.x = msg.pose.pose.position.x
+    vel.y = msg.pose.pose.position.y
+    vel.vx = msg.twist.twist.linear.x
+    vel.vy = msg.twist.twist.linear.y
+    pub.publish(vel)
+    #customvel = Vel()
+    #customvel.name = "linear"
+    #customvel.vel = vel.linear.x
+    #pub2.publish(customvel)
 def action_client(): #function to set the goal
     # Creates the SimpleActionClient, passing the type of the action
     client = actionlib.SimpleActionClient('/reaching_goal', assignment_2_2023.msg.PlanningAction)
@@ -56,11 +66,12 @@ if __name__ == '__main__': # entry point of Python script.
         # Initializes a rospy node so that the SimpleActionClient can
         # publish and subscribe over ROS.
         rospy.init_node('nodeA_client')
-        x = Odometry().pose.pose.position.x
-        y = Odometry().pose.pose.position.y
-        vx = Odometry().twist.twist.linear.x
-        vy = Odometry().twist.twist.linear.y
-        pub.publish(x, y, vx, vy)
+        rospy.Subscriber("/odom", Odometry, callback)
+        #x = Odometry().pose.pose.position.x
+        #y = Odometry().pose.pose.position.y
+        #vx = Odometry().twist.twist.linear.x
+        #vy = Odometry().twist.twist.linear.y
+        #pub.publish(x, y, vx, vy)
         action_client()
         #result = action_client()
         #print("Result:", result)
