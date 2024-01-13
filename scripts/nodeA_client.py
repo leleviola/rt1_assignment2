@@ -21,6 +21,7 @@ def callback(msg):
     vel.vx = msg.twist.twist.linear.x
     vel.vy = msg.twist.twist.linear.y
     pub.publish(vel)
+    
 def action_client(): #function to set the goal
     # Creates the SimpleActionClient, passing the type of the action
     client = actionlib.SimpleActionClient('/reaching_goal', assignment_2_2023.msg.PlanningAction)
@@ -39,12 +40,12 @@ def action_client(): #function to set the goal
             client.send_goal(goal)
             # target cancelation
             print("press 'c' to cancel the goal: ")
-            while(client.get_state() != actionlib.GoalStatus.SUCCEEDED):
-                i, o, e = select.select( [sys.stdin], [], [], 1.0 )
+            while(client.get_state() != actionlib.GoalStatus.SUCCEEDED): # ig the goal has reached we can't cancel the goal
+                i, o, e = select.select( [sys.stdin], [], [], 1.0 ) # to set a timeout for the input reading, to check periodically if the goal is reached
                 if (i):
                     cancel = sys.stdin.readline().strip()
                     if cancel == 'c':
-                        client.cancel_goal()
+                        client.cancel_goal() # cancel the goal
                         print("goal canceled...")
                         break
             # Sends the goal to the action server.
@@ -62,7 +63,7 @@ if __name__ == '__main__': # entry point of Python script.
         # Initializes a rospy node so that the SimpleActionClient can
         # publish and subscribe over ROS.
         rospy.init_node('nodeA_client')
-        rospy.Subscriber("/odom", Odometry, callback)
+        rospy.Subscriber("/odom", Odometry, callback) # subscriber to /odom, for reading x,y,vx and vy of the robot
         
         action_client()
         
