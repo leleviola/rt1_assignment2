@@ -65,6 +65,7 @@ add_message_files(
 add_service_files(
    FILES
    GoalPos.srv
+   DisAvg.srv
  )
 
 ## Generate actions in the 'action' folder

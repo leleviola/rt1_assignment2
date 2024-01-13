@@ -98,6 +98,7 @@ def planning(goal):
     desired_position_.y = goal.target_pose.pose.position.y
     rospy.set_param('des_pos_x', desired_position_.x)
     rospy.set_param('des_pos_y', desired_position_.y)
+    rospy.loginfo("Received goal: %s", str(goal))
     
     
     feedback = assignment_2_2023.msg.PlanningFeedback()
