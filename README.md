@@ -24,7 +24,8 @@ This node implements an action client that permits the user to set the target th
 
 ## Node B: Last Goal
 Node B is a service node, which means that it implements a request/reply communication. The service used in nodeB is GoalPos (GoalPos.srv in srv folder), that is composed only by the response, this is because there isn't any client that makes a request, but it returns, when the service is called, the last goal coordinates. This node in particular hasn't a graphical interface, so it isn't runned in a Xterm terminal. For calling the service you have to use in a new terminal (and in the workspace folder) the following command:
-rosservice call /nodeB.
+
+rosservice call /nodeB
 
 ## Node C: Distance and Average Speed
 It also is a service node that by retrieving the goal coordinates from the parameter (I did it with rospy.get_param(), but in the comments section I will explain an other way that better exploits the power of services), with the function calc_dist_avg(req) it calculate the euclidean distance from the target, and the average speed along x and y. The average speed is calculated using a set of values of velocity, which size is defined as a parameter in the launch file launcher.launch. Here, the service is named DisAvg, and like before, it is composed only by the response part. The values of the service of type DisAvg are sent by terminal in real time in the window of node C.
@@ -42,15 +43,21 @@ You need to have installed the following programs:
 - ROS (again... obviously)
 
 # Running instructions
-To run this program, you have, after having satisfied all the prerequisites, to clone the github repository in the src folder of your ros workspace, with 
+To run this program, you have, after having satisfied all the prerequisites, to clone the github repository in the src folder of your ros workspace, with:
+
 git clone https://github.com/leleviola/rt1_assignment2/tree/master
 
-After that you have to go in your main ros workspace folder, and launch from terminal the command
+After that you have to go in your main ros workspace folder, and launch from terminal the command:
+
 catkin_make
 
 Then you can go back to the /src folder and launch the program with:
+
 roslaunch assignment_2_2023 launcher.launch
 
 # Comments
+- I tryied to write a code as simple as possible, with all the essential things, and, at the same time, tryied to make a useful graphic interface, with more than one terminal... I really hope you appreciate it :)
+- I remember that if you want to see the last target you can use the command rosservice call /nodeB from terminal.
+- A my idea that I didn't implemented, because I was not sure it would have respected the scope of the assignment, but that I think could be a good thing, is to use node b as a client and node c as the server that elaborates the last goal x and y
 
 Last commit 08 November 2023
