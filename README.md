@@ -3,109 +3,44 @@
 by leleviola
 
 ## Introduction
-In this project there is a 3D simulator, in which there is mobile robot that moves in a plane, and an environment, a world, with edges and obstacles (walls); you can see  it in the picture below. The original package can bee seen here: https://github.com/CarmineD8/assignment_2_2023
-I implemented other three nodes, that will be described in the next section:
+In this project there is a 3D simulator, in which there is mobile robot that moves in a plane, and an environment, a world, with edges and obstacles (walls); you can see  it in the picture below. The original package can bee seen here: https://github.com/CarmineD8/assignment_2_2023.
+
+Other than it, I implemented other three nodes, that will be described in the next section:
 - node A
 - node B
 - node C
+
 During the simulation, there will be opened 5 windows, 2 are needed for the simulation, another one is the one from which you run the program, where there will be displayed som debug messagges, the other 2 are the nodeA and the nodeC
-The robot has a laser sensor that permits to it to see obstacles in front of it, and has a cartesian coordinate sistem 
-### Prerequisites
+<img src="https://github.com/leleviola/rt1_assignment2/blob/resources/images/Schermata%20del%202024-01-13%2017-20-48.png" alt="Alt Text" width="400"/>
+
+
+
+# Nodes description
+
+## Node A: Action Client
+This node implements an action client that permits the user to set the target that the robot has to reach. In particular, by the keyboard input the user will send to the action server the new goal coordinates by the topic '/reaching_goal'. The node contains also a subscriber to /Odom, in which you can find the robot's position and velocity in real time, and then publish them to the topic '/pos_vel' using the custom message PosVel. Here there is the pseudocode of this first node.
+
+<img src="https://github.com/leleviola/rt1_assignment2/blob/resources/images/Schermata%20del%202024-01-13%2018-39-31.png" alt="Alt Text" width="1000"/>
+
+## Node B: Last Goal
+Node B is a service node, which means that it implements a request/reply communication. The service used in nodeB is GoalPos (GoalPos.srv in srv folder), that is composed only by the response, this is because there isn't any client that makes a request, but it returns, when the service is called, the last goal coordinates. This node in particular hasn't a graphical interface, so it isn't runned in a Xterm terminal. For calling the service you have to use in a new terminal (and in the workspace folder) the following command:
+rosservice call /nodeB.
+
+## Node C: 
+It also is a service node that by retrieving the goal coordinates from the parameter (I did it with rospy.get_param(), but in comment I will explain another way that better exploits the power of services), with the function calc_dist_avg(req) it calculate the distance from the target and
+It also subscribes to the '/pos_vel' topic and retrieve the message published by node A; this value are used for calculating the distance and average speed.
+
+<img src="https://github.com/leleviola/rt1_assignment2/blob/resources/images/Schermata%20del%202024-01-13%2018-59-04.png" alt="Alt Text" width="1000"/>
+## Prerequisites
 You need to have installed the following programs:
-- Gazebo: the 3d simulation environment
-- Rviz
+- Gazebo: the 3d simulator for ros
+- Rviz:a tool for ROS Visualization. It allows the user to view the simulated robot model, log sensor information from the robot's sensors, and replay the logged sensor information. By visualizing what the robot is seeing, thinking, and doing, the user can debug a robot application from sensor inputs to planned (or unplanned) actions.
 - Xterm
 - the code is written in python3, so, for running it, it's obviously needed it
+- ROS (again... obviously)
 
-## Steps and Pseudocode
+## Running instructions
 
-The main program is composed by the robot initialization, where are initialized the most important variables, and by a while loop. This while loop is splitted in two sections:
+## Comments
 
-- the first that contains all the actions that the robot do, when isn't grabbing any token, in order to take the nearest and right token;
-
-- the second one that makes the robot release the token in the right place and starts if and only if the robot is moving a token.
-
-<p>
-  All the reasonings and steps are described in the flowchart below.
-</p>
-
-<p align= "center">
-  <img src = "images/Flowchart.png">
-  
-  While markers is the variables that contains all the markers that the robot sees, marker_taken contains only the markers that are moved to the center. Doing this is easyer to determine wich of the markers that robot seen have been already moved and wich not.
-  When the robot has to take a marker, it, using some function that will be described in the next section, checks if the token's distance is:
-- =-1 => this means that the robot doesn't see any token;
-- < a threshold value (0.4 or 0.6) => the robot grab/ungrab the token.
-It also checks if the angle between the robot and the token is:
-- -2 < angle < 2 => this means that the token is  straight in front of the robot so it has to toward it direction;
-- major than 2 => turn right a bit
-- minor than -2 => turn left a bit
-
-**I should specify that solution is built under the condition that there are 6 token all placed in circle, this means that if they are more than 6 or not placed in circle it isn't sure that this solution will works**.
-</p>
-
-## Functions
-
-For making coding simpler, I've used some useful functions.
-
-### drive(speed, seconds)
-
-Function for setting a linear velocity    
-Args: 
-  - speed (int): the speed of the wheels
-  - seconds (int): the time interval
-   
-### turn(speed, seconds)
-
-Function for setting an angular velocity    
-Args: 
-  - speed (int): the speed of the wheels
-  - seconds (int): the time interval
-
-### find_mindist_untaken_token(marker_list, marker_taken)
-
-Function to find the closest token that is in marker_list and not in marker_taken
-- Args:
-  - marker_list(list): the list of all markers seen by the robot
-  - marker_taken(list): the list of all the markers moved to the center
-- Returns:
-  - dist (float): distance of the closest token (-1 if no token is detected)
-  - rot_y (float): angle between the robot and the token (-1 if no token is detected)
-  - index (int): the index in marker_list of the token (-1 if no token is detected)
-
-### find_mindist_taken_token(marker_list, marker_taken)
-
-Function to find the closest token of tokens that are in marker_list and also in marker_taken
-- Args:
-  - marker_list(list): the list of all markers seen by the robot
-  - marker_taken(list): the list of all the markers moved to the center
-- Returns:
-  - dist (float): distance of the closest token (-1 if no token is detected)
-  - rot_y (float): angle between the robot and the token (-1 if no token is detected)
-  - index (int): the index in marker_list of the token (-1 if no token is detected)
-### find_maxdist_token(marker_list)
-Function to find of the most distant token
-- Args:
-  - marker_list(list): the list of all markers seen by the robot
-
-- Returns:
-  - dist (float): distance (-1 if no token is detected)
-  - rot_y (float): angle between the robot and the token (-1 if no token is detected)
-  - index(int): the index of the element at max distance
- 
-### find_same_token(list, mark)
-    
-Function to determine if there is the token "mark" in the list of tokens "list".
-- Args:
-  - list(list): is the list where it will search the token "mark"
-  - mark(Token): is the token to find
-- Returns:
-  - True if "mark" is in "list"
-  - False if "mark" isn't in "list"
-
-## Results and conclusions
-After having traveled the entire circle, and having moved all the tokens together, the robot should print a message in terminal and stop moving, and all the tokens are like in the following image. 
-<p align = "center">
-  <img src ="images/End.png">
-</p>
 Last commit 08 November 2023
