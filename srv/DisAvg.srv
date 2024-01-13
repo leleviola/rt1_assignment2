@@ -1,5 +1,4 @@
-float32 goal_x
-float32 goal_y
 ---
 float32 distance
-float32 avg_speed
+float32 avg_speedx
+float32 avg_speedy
