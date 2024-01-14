@@ -36,7 +36,7 @@ def retrieve_pos_vel(msg):
     x = msg.x
     y = msg.x
     vx = msg.vx
-    vz = msg.vy
+    vz = msg.vz
     velx.append(vx)
     velz.append(vz)
     if(len(velx)==winsize+1):
