@@ -11,26 +11,22 @@ import subprocess
 x = 0
 y = 0
 vx = 0
-vy = 0
-#summx = 0
-#summy = 0
-#count = 0
+vz = 0
 velx = []
-vely =[]
+velz =[]
 global winsize
 
 def calc_dist_avg(req):
     # this was a my idea, that I didn't implemented because I was not sure it would have respected the scope of the assignment, but I think that it could be a good thing to use node b as a client and node c as the server that elaborates the last goal x and y
     #gx = req.goal_x
     #gy = req.goal_y
+    
     gx=rospy.get_param('des_pos_x')
     gy=rospy.get_param('des_pos_y')
     dist = math.sqrt((gx - x)**2 + (gy - y)**2)
-    #avg_vx = summx / count
-    #avg_vy = summy / count
     avg_vx = sum(velx)/winsize
-    avg_vy = sum(vely)/winsize
-    return DisAvgResponse(dist, avg_vx, avg_vy)
+    avg_vz = sum(velz)/winsize
+    return DisAvgResponse(dist, avg_vx, avg_vz)
     
     
 def retrieve_pos_vel(msg):
@@ -40,21 +36,19 @@ def retrieve_pos_vel(msg):
     x = msg.x
     y = msg.x
     vx = msg.vx
-    vy = msg.vy
+    vz = msg.vy
     velx.append(vx)
-    vely.append(vy)
+    velz.append(vz)
     if(len(velx)==winsize+1):
         velx = velx[1:] # remove the first element and slide back all the array
-    if(len(vely)==winsize+1):
-        vely = vely[1:] # remove the first element and slide back all the array
+    if(len(velz)==winsize+1):
+        velz = velz[1:] # remove the first element and slide back all the array
         
-    
-    
 def disp():
     command = "rosservice call /nodeC"
     try:
         result = subprocess.run(command, shell=True, check=True, text=True, capture_output=True)
-        print("distance from target and average x and y speed:\n", result.stdout)
+        print("distance from target and average x and z speed:\n", result.stdout)
     except subprocess.CalledProcessError as e:
         print(f"error executing command: {e}")
         print("command output (stderr):\n", e.stderr)
