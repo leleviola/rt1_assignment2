@@ -31,7 +31,7 @@ def calc_dist_avg(req):
     
 def retrieve_pos_vel(msg):
     global x,y
-    global velx, vely
+    global velx, velz
     
     x = msg.x
     y = msg.x
