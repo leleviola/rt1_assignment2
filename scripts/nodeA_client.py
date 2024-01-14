@@ -19,7 +19,7 @@ def callback(msg):
     vel.x = msg.pose.pose.position.x
     vel.y = msg.pose.pose.position.y
     vel.vx = msg.twist.twist.linear.x
-    vel.vy = msg.twist.twist.linear.y
+    vel.vz = msg.twist.twist.angular.z
     pub.publish(vel)
     
 def action_client(): #function to set the goal
