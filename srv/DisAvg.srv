@@ -1,4 +1,4 @@
 ---
 float32 distance
 float32 avg_speedx
-float32 avg_speedy
+float32 avg_speedz
