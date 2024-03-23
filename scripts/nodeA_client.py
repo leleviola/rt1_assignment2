@@ -1,20 +1,44 @@
 #! /usr/bin/env python3
+
+"""
+.. module:: nodeA_client
+
+  :platform: Unix
+  :synopsis: Python module for the second assignment of research track
+
+.. moduleauthor:: Samuele Viola 
+
+This node's aim is to set, by using keyword, the next goal's position. The goal can be canceled by pressing c key.
+
+Subscriber:
+/odom
+Publisher:
+/pos_vel
+
+
+
+"""
 import rospy
 import select
-#import geometry_msgs.msg
-#from nav_msgs.msg import Odometry
 import actionlib
 import actionlib.msg
 import assignment_2_2023.msg
 from assignment_2_2023.msg import PosVel
 from nav_msgs.msg import Odometry
 from assignment_2_2023.srv import GoalPos
-#from actionlib_msgs.msg import GoalStatus
 import sys
 
 pub = rospy.Publisher('/pos_vel', PosVel, queue_size=10)
 
 def callback(msg):
+    """
+
+    This function, when called, publish to /pos_vel the robot position and linear and angular velocity
+
+    Args:
+        msg: message from /odom
+
+    """
     vel = PosVel()
     vel.x = msg.pose.pose.position.x
     vel.y = msg.pose.pose.position.y
@@ -51,8 +75,6 @@ def action_client(): #function to set the goal
             # Sends the goal to the action server.
             if(client.get_state() == actionlib.GoalStatus.SUCCEEDED):
                 print("goal has been reached! :)")
-            
-            
         except ValueError:
             print("invalid input, please enter a number.")
         
